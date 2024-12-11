@@ -1,19 +1,27 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
-import { TokenExpiredError } from "@nestjs/jwt";
+import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "@nestjs/jwt";
 import { Response } from "express";
 
-@Catch(TokenExpiredError)
+@Catch(TokenExpiredError, JsonWebTokenError, NotBeforeError)
 export class JWTFilter implements ExceptionFilter {
-    catch(_exception: TokenExpiredError, host: ArgumentsHost) {
+    catch(exception: Error, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
-        const status = 403;
+        const status = 401;
+        let message = 'Your session has expired. Please log in again.';
 
+        if (exception instanceof TokenExpiredError) {
+            message = 'Your JWT has expired. Please log in again.';
+        } else if (exception instanceof JsonWebTokenError) {
+            message = 'Invalid JWT token. Please log in again.';
+        } else if (exception instanceof NotBeforeError) {
+            message = 'JWT token is not yet valid. Please try again later.';
+        }
         response
             .status(status)
             .json({
-                "message": "Your JWT is expired please login again.",
-                "error": "Forbidden",
+                message: message,
+                "error": "Unauthorized",
                 "statusCode": status
             });
     }

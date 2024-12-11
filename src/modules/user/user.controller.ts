@@ -1,42 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseFilters, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Req, ParseIntPipe, UseGuards, } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/common/guards/auth.guard';
-import { RoleGuard } from 'src/common/guards/role.guard';
-import { Roles } from 'src/common/decorators/role.decorator';
-import { RolesEnum } from 'src/common/enums/roles.enum';
 import { CacheInterceptor } from 'src/common/interceptors/cache.interceptor';
+import { Action } from 'src/common/enums/action.enum';
+import { ForbiddenError, subject } from '@casl/ability';
+import { CaslGuard } from 'src/common/guards/casl.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(
+    private readonly userService: UserService
+  ) { }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  signup(@Body() createUserDto: CreateUserDto) {
+    return this.userService.signup(createUserDto);
   }
 
   @Get()
-  @UseGuards(AuthGuard, RoleGuard)
-  @Roles([RolesEnum.user])
   @UseInterceptors(CacheInterceptor)
   findAll() {
     return this.userService.findAll();
   }
 
-  @Get(':username')
-  findOne(@Param('username') username: string) {
-    return this.userService.findOne(username);
-  }
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @UseGuards(CaslGuard)
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto, @Req() req) {
+    const subjectUser = await this.userService.findById(id);
+    ForbiddenError.from(req.ability).throwUnlessCan(Action.Update, subject('User', subjectUser));
+
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @UseGuards(CaslGuard)
+  async remove(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    const subjectUser = await this.userService.findById(id);
+    ForbiddenError.from(req.ability).throwUnlessCan(Action.Delete, subject('User', subjectUser));
+
+    return this.userService.remove(id);
   }
 }

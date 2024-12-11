@@ -9,7 +9,7 @@ export class UserService {
   saltOrRounds: number = 10
   constructor(private readonly prismaService: PrismaService) { }
 
-  async create(createUserDto: CreateUserDto) {
+  async signup(createUserDto: CreateUserDto) {
     const hashedPassword = await hash(createUserDto.password, this.saltOrRounds)
     const user = await this.prismaService.user.create({
       data: {
@@ -18,7 +18,8 @@ export class UserService {
       }
     });
 
-    return user;
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword
   }
 
   findAll() {
@@ -28,6 +29,11 @@ export class UserService {
   async findOne(username: string) {
     return this.prismaService.user.findUnique({
       where: { username }
+    });
+  }
+  async findById(id: number) {
+    return this.prismaService.user.findFirst({
+      where: { id }
     });
   }
 

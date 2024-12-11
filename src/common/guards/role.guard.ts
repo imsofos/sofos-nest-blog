@@ -17,6 +17,5 @@ export class RoleGuard implements CanActivate {
             console.error(error);
             return false;
         }
-
     }
 }
