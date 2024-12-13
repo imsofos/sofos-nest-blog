@@ -15,9 +15,25 @@ model User {
   avatar    String?
   role      Role     @default(USER)
   createdAt DateTime @default(now())
+  posts     Post[] // prisma level relation doesnt do anything in DB for this field
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(255)
+  slug        String    @unique()
+  imagePath   String
+  // prisma level relation doesnt do anything in DB for this field
+  author      User      @relation(fields: [author_id], references: [id])
+  author_id   Int // real thing in DB
+  description String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt()
+  deleted_at  DateTime?
+  is_public   Boolean   @default(false)
 }

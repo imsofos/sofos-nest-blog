@@ -10,7 +10,7 @@ export class PrismaFilter implements ExceptionFilter {
         const status = exception instanceof PrismaClientKnownRequestError ? 400 : 500;
 
 
-        let message = exception.message;
+        let message = "Error"; // exception.message is saying a lot about error
         if (exception instanceof PrismaClientKnownRequestError) {
             switch (exception.code) {
                 case 'P2002':
