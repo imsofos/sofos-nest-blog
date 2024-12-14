@@ -14,6 +14,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
     const user = await this.userService.findOne(loginDto.username);
+    if (!user) throw new UnauthorizedException();
     const validPassword = await compare(loginDto.password, user?.password);
 
     if (!user || !validPassword) {

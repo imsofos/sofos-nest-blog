@@ -43,7 +43,13 @@ export class PostController {
     @UseGuards(CaslGuard)
     async findById(@Param('id', ParseIntPipe) id: number, @Ability() ability: AppAbility) {
         const post = await this.postService.findById(ability, id);
-        // cheking in service layer or in controller?
+        if (!post) throw new NotFoundException();
+        // cheking in service layer or in controller? how much controll you need
+        // checking permission to resource => controller
+        // checking permission to subject => 1. controller by getting a instance then check 
+        //                                   2. or checking in service same method as above
+        //                                   3. or doing it with accessibleBy in query without having to get instance
+        // checking field level permissions => service ( can be done in controller its just ugly )  
         ForbiddenError.from(ability).throwUnlessCan(Action.Read, subject('Post', post));
         if (!post) throw new NotFoundException();
         return post;
@@ -55,10 +61,6 @@ export class PostController {
         @Param('id', ParseIntPipe) id: number,
         @Body() updatePostDto: UpdatePostDto,
         @Ability() ability: AppAbility) {
-        const post = await this.postService.findById(ability, id);
-        ForbiddenError.from(ability).throwUnlessCan(Action.Update, subject('Post', post));
-        if (!post) throw new NotFoundException();
-
         const result = await this.postService.update(ability, id, updatePostDto);
         return result
     }
@@ -69,6 +71,7 @@ export class PostController {
         @Param('id', ParseIntPipe) id: number,
         @Ability() ability: AppAbility) {
         const post = await this.postService.findById(ability, id);
+        if (!post) throw new NotFoundException();
         ForbiddenError.from(ability).throwUnlessCan(Action.Delete, subject('Post', post));
         if (!post) throw new NotFoundException();
 

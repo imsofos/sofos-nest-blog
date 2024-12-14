@@ -16,13 +16,14 @@ export class CaslAbilityFactory {
         const { can, cannot, build } = new AbilityBuilder<AppAbility>(createPrismaAbility);
 
         if (user.role == RolesEnum.admin) {
-            can(Action.Manage, 'all'); // read-write access to everything
+            can(Action.Manage, 'all');
         } else {
-            can(Action.Read, 'all'); // read-only access to everything
+            can(Action.Read, 'all');
             cannot(Action.Read, 'Post', { is_public: false })
         }
 
         can(Action.Update, 'User', { id: user.id });
+        can(Action.Update, 'Post', { author_id: user.id });
         can(Action.Delete, 'User', { id: user.id });
         cannot(Action.Delete, 'User', { role: RolesEnum.admin });
 

@@ -6,7 +6,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 
 export const multerOptions = {
     limits: {
-        fileSize: +process.env.MAX_FILE_SIZE || 5000 * 1024 * 1024,
+        fileSize: process.env.MAX_FILE_SIZE ? +process.env.MAX_FILE_SIZE : 5000 * 1024 * 1024,
     },
     fileFilter: (req: any, file: any, cb: any) => {
         if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
