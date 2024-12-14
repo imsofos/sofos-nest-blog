@@ -7,6 +7,8 @@ import { PostModule } from './modules/post/post.module';
 import { PostController } from './modules/post/post.controller';
 import { PostService } from './modules/post/post.service';
 import { DbModule } from './modules/db/db.module';
+import { BullModule } from '@nestjs/bullmq';
+import { AudioModule } from './modules/audio/audio.module';
 
 @Module({
   imports: [
@@ -15,7 +17,14 @@ import { DbModule } from './modules/db/db.module';
     AuthModule,
     CaslModule,
     PostModule,
-    DbModule
+    DbModule,
+    BullModule.forRoot({
+      connection: {
+        host: '127.0.0.1',
+        port: 6379
+      }
+    }),
+    AudioModule
   ],
   controllers: [PostController],
   providers: [PostService]
