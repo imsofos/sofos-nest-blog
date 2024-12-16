@@ -4,15 +4,18 @@ import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { CaslModule } from './modules/casl/casl.module';
 import { PostModule } from './modules/post/post.module';
-import { PostController } from './modules/post/post.controller';
-import { PostService } from './modules/post/post.service';
 import { DbModule } from './modules/db/db.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AudioModule } from './modules/audio/audio.module';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+    CacheModule.register(),
     UserModule,
     AuthModule,
     CaslModule,
@@ -26,7 +29,11 @@ import { AudioModule } from './modules/audio/audio.module';
     }),
     AudioModule
   ],
-  controllers: [PostController],
-  providers: [PostService]
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    }
+  ]
 })
 export class AppModule { }

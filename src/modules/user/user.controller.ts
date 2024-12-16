@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, UseGuards, NotFoundException, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, NotFoundException, Logger, } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { CacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 import { Action } from 'src/common/enums/action.enum';
 import { ForbiddenError, subject } from '@casl/ability';
 import { CaslGuard } from 'src/common/guards/casl.guard';
@@ -11,6 +10,7 @@ import { AppAbility } from '../casl/caslAbility.factory';
 
 @Controller('user')
 export class UserController {
+  // private readonly logger = new Logger(UserController.name, { timestamp: true });
   constructor(
     private readonly userService: UserService
   ) { }
@@ -21,8 +21,8 @@ export class UserController {
   }
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
   findAll() {
+    // this.logger.log('log');
     return this.userService.findAll();
   }
 

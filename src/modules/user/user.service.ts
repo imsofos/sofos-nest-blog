@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/modules/db/prisma.service';
 import { hash } from 'bcrypt';
+// import { Cron, CronExpression, Interval } from '@nestjs/schedule';
 
 @Injectable()
 export class UserService {
   saltOrRounds: number = 10
+  private readonly logger = new Logger(UserService.name, { timestamp: true });
   constructor(private readonly prismaService: PrismaService) { }
 
   async signup(createUserDto: CreateUserDto) {
@@ -21,6 +23,13 @@ export class UserService {
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword
   }
+
+  // @Cron('45 * * * * *')
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // @Interval(10000)
+  // handleCron() {
+  //   this.logger.debug('Called when the current second is 45');
+  // }
 
   findAll() {
     return `This action returns all user ${Date.now()}`;

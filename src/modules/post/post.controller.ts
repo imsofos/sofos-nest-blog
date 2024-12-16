@@ -11,12 +11,27 @@ import { ForbiddenError, subject } from '@casl/ability';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Ability } from 'src/common/decorators/ability.decorator';
 import { AppAbility } from '../casl/caslAbility.factory';
+import { ModuleRef } from '@nestjs/core';
+import { UserService } from '../user/user.service';
 
 
 @Controller('post')
 export class PostController {
 
-    constructor(private readonly postService: PostService) { }
+    private service: UserService;
+
+    constructor(
+        private readonly postService: PostService,
+        private readonly moduleRef: ModuleRef
+    ) { }
+
+    @Get('/test')
+    async test() {
+        this.service = this.moduleRef.get(UserService, {strict: false});
+        console.log(this.service);
+        return '';
+    }
+
 
     @Post()
     @Rules([{ action: Action.Create, subject: 'Post' }])
