@@ -1,12 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Socket.IO Chat App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .chat-container {
+            width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        #messages {
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1> Hello world!</h1>
-    <img src="http://localhost:3000/uploads/0ceec5b0-4207-4b24-9188-374c34ad326c.jpeg"/>
+
+    <div class="chat-container">
+        <h2>Chat App</h2>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script>
+
+        const socket = io('http://localhost:3000');
+        const messageInput = document.getElementById('messageInput');
+        const messagesDiv = document.getElementById('messages');
+
+
+        socket.on('chat_message', function ({ message, id }) {
+            displayMessage(id + ' : ' + message);
+        });
+
+        socket.on('user-joined', function (message) {
+            displayMessage('user joined: ' + message);
+        });
+
+        socket.on('user-leaved', function (message) {
+            displayMessage('user left: ' + message);
+        });
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message.trim()) {
+                socket.emit('chat_message', message);
+                messageInput.value = '';
+            }
+        }
+
+
+        function displayMessage(message) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+
 </body>
+
 </html>

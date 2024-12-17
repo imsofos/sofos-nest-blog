@@ -10,6 +10,7 @@ import { AudioModule } from './modules/audio/audio.module';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { ScheduleModule } from '@nestjs/schedule';
         port: 6379
       }
     }),
-    AudioModule
+    AudioModule,
+    ChatModule
   ],
   providers: [
     {
