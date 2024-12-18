@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/modules/db/prisma.service';
+import { PrismaService } from '../db/prisma.service';
 import { hash } from 'bcrypt';
 // import { Cron, CronExpression, Interval } from '@nestjs/schedule';
 

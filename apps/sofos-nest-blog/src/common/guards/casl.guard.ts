@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
-import { CaslAbilityFactory } from "src/modules/casl/caslAbility.factory";
+import { CaslAbilityFactory } from "../../modules/casl/caslAbility.factory";
 import { Rules } from "../decorators/rule.decorator";
 
 @Injectable()

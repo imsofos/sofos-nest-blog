@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/modules/db/prisma.service';
+import { PrismaService } from '../db/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { accessibleBy } from '@casl/prisma';
 import { Post } from '@prisma/client';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Action } from 'src/common/enums/action.enum';
+import { Action } from '../../common/enums/action.enum';
 import { ForbiddenError } from '@casl/ability';
 import { AppAbility } from '../casl/caslAbility.factory';
 import { permittedFieldsOf } from '@casl/ability/extra';

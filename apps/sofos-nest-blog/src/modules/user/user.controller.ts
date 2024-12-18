@@ -1,23 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, NotFoundException, Logger, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, NotFoundException, Logger, Inject, } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Action } from 'src/common/enums/action.enum';
+import { Action } from '../../common/enums/action.enum';
 import { ForbiddenError, subject } from '@casl/ability';
-import { CaslGuard } from 'src/common/guards/casl.guard';
-import { Ability } from 'src/common/decorators/ability.decorator';
+import { CaslGuard } from '../../common/guards/casl.guard';
+import { Ability } from '../../common/decorators/ability.decorator';
 import { AppAbility } from '../casl/caslAbility.factory';
+import { ClientProxy } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
 @Controller('user')
 export class UserController {
   // private readonly logger = new Logger(UserController.name, { timestamp: true });
   constructor(
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    @Inject('ANALYTICS') private readonly analyticsClient: ClientProxy
   ) { }
 
   @Post()
   signup(@Body() createUserDto: CreateUserDto) {
-    return this.userService.signup(createUserDto);
+    const result = this.userService.signup(createUserDto);
+    this.analyticsClient.emit('user_created', createUserDto);
+    return result
+  }
+
+  @Get('analytics')
+  getAnalytics(): Observable<number> {
+    return this.analyticsClient.send({ cmd: 'analytics' }, {});
   }
 
   @Get()

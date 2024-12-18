@@ -2,8 +2,8 @@ import { AbilityBuilder, PureAbility } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
 import { Injectable } from '@nestjs/common';
 import { Post, User } from '@prisma/client';
-import { Action } from "src/common/enums/action.enum";
-import { RolesEnum } from 'src/common/enums/roles.enum';
+import { Action } from "../../common/enums/action.enum";
+import { RolesEnum } from '../../common/enums/roles.enum';
 
 export type AppAbility = PureAbility<[Action, Subjects<{
     User: User
