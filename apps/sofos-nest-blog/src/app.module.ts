@@ -16,7 +16,7 @@ import { ChatModule } from './modules/chat/chat.module';
   imports: [
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
-    CacheModule.register(),
+    // CacheModule.register(),
     UserModule,
     AuthModule,
     CaslModule,
@@ -31,11 +31,11 @@ import { ChatModule } from './modules/chat/chat.module';
     AudioModule,
     ChatModule
   ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    }
-  ]
+  // providers: [
+  //   {
+  //     provide: APP_INTERCEPTOR,
+  //     useClass: CacheInterceptor,
+  //   }
+  // ]
 })
 export class AppModule { }

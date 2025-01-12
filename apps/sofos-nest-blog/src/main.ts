@@ -7,10 +7,12 @@ import { PrismaFilter } from './common/filters/prisma.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new JWTFilter(), new CASLFilter(), new PrismaFilter());
   app.useStaticAssets(join(__dirname, '..', 'public'));
